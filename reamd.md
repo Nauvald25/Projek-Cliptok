@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ClipTok - Downloader</title>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Oswald', sans-serif;
+      background: linear-gradient(to right, #f0f2f5, #e4ebf1);
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 1rem;
+      min-height: 100vh;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    .clock {
+      font-size: 1rem;
+      margin-bottom: 1rem;
+      color: #333;
+      font-weight: 600;
+    }
+
+    .tools {
+      display: flex;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .tools button {
+      background-color: #333;
+      color: #fff;
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 500;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      transition: background-color 0.3s ease;
+    }
+
+    .card {
+      background-color: white;
+      padding: 2rem;
+      border-radius: 20px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+      max-width: 480px;
+      width: 100%;
+      text-align: center;
+    }
+
+    .card h1 {
+      font-size: 2.2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .card p {
+      font-size: 1rem;
+      margin-bottom: 1.5rem;
+      color: #555;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .input-group input,
+    .input-group select {
+      padding: 0.75rem 1rem;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+    }
+
+    .input-group button {
+      padding: 0.8rem 1rem;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.5rem;
+      transition: background-color 0.2s ease;
+    }
+
+    .history {
+      margin-top: 20px;
+      padding: 15px;
+      background: rgba(0, 0, 0, 0.05);
+      border-radius: 12px;
+    }
+
+    .history h3 {
+      margin-bottom: 10px;
+      font-size: 1.1rem;
+    }
+
+    .history ul {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    .history ul li {
+      background: rgba(0, 0, 0, 0.08);
+      padding: 8px 12px;
+      margin-bottom: 6px;
+      border-radius: 8px;
+      font-size: 0.9em;
+      word-break: break-word;
+    }
+
+    .history button {
+      margin-top: 10px;
+      padding: 0.5rem 0.75rem;
+      font-size: 0.85rem;
+      border: none;
+      border-radius: 6px;
+      background-color: #ccc;
+      cursor: pointer;
+    }
+
+    .clear-btn {
+  background-color: #dc3545;
+  color: white;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  margin-top: 0.75rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.clear-btn:hover {
+  background-color: #c82333;
+}
+
+body.dark .clear-btn {
+  background-color: #e74c3c;
+}
+
+body.dark .clear-btn:hover {
+  background-color: #c0392b;
+}
+
+    body.dark {
+      background: linear-gradient(to right, #1c1c2b, #2b2b45);
+      color: #f0f0f0;
+    }
+
+    body.dark .clock {
+      color: #f5f5f5;
+    }
+
+    body.dark .card {
+      background-color: #2a2a3d;
+    }
+
+    body.dark .input-group input,
+    body.dark .input-group select {
+      background-color: #444;
+      color: #fff;
+      border: 1px solid #666;
+    }
+
+    body.dark .input-group button,
+    body.dark .tools button {
+      background-color: #28a745;
+      color: white;
+    }
+
+    body.dark .history {
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    body.dark .history ul li {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    @media (max-width: 500px) {
+      .tools {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .input-group button {
+        font-size: 0.95rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="clock" id="clock"></div>
+
+  <div class="tools">
+    <button onclick="toggleDarkMode()">🌗 Dark Mode</button>
+    <button onclick="copyLink()">📋 Salin Link</button>
+  </div>
+
+  <div class="card">
+    <h1>ClipTok</h1>
+    <p>Tempel URL video TikTok, lalu pilih format dan klik Unduh.</p>
+
+    <div class="input-group">
+      <input type="text" id="videoUrl" placeholder="https://vt.tiktok.com/..." />
+      <select id="formatSelect">
+        <option value="video" selected>🎥 Video (MP4)</option>
+        <option value="audio">🎵 Audio (MP3)</option>
+      </select>
+      <button id="downloadBtn">⬇️ Unduh</button>
+    </div>
+    <div class="history" id="historySection">
+        <h3>Riwayat Unduhan</h3>
+        <ul id="historyList"></ul>
+        <button class="clear-btn" onclick="clearHistory()">🗑️ Hapus Riwayat</button>
+      </div>
+      
+
+    <div id="statusMessage"></div>
+  </div>
+  <script>
+    const downloadBtn = document.getElementById("downloadBtn");
+    const statusMessage = document.getElementById("statusMessage");
+  
+    downloadBtn.addEventListener("click", async () => {
+      const url = document.getElementById("videoUrl").value.trim();
+      const format = document.getElementById("formatSelect").value;
+      if (!url) {
+        alert("Masukkan URL TikTok terlebih dahulu");
+        return;
+      }
+  
+      statusMessage.textContent = "Sedang mengambil data...";
+      statusMessage.className = "";
+  
+      try {
+        const res = await fetch(`https://tikwm.com/api/?url=${encodeURIComponent(url)}`);
+        const data = await res.json();
+        if (!data.data) throw new Error("Gagal mengambil data.");
+  
+        const downloadUrl = format === "video" ? data.data.play : data.data.music;
+        const a = document.createElement("a");
+        a.href = downloadUrl;
+        a.download = format === "video" ? "video.mp4" : "audio.mp3";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+  
+        statusMessage.textContent = "Berhasil! Unduhan dimulai.";
+        statusMessage.className = "success";
+  
+        addToHistory(url, format); // tambahkan ke riwayat
+  
+      } catch (err) {
+        console.error(err);
+        statusMessage.textContent = "Terjadi kesalahan. Coba lagi.";
+        statusMessage.className = "error";
+      }
+    });
+  
+    function copyLink() {
+      const urlField = document.getElementById("videoUrl");
+      if (!urlField.value) {
+        alert("Tidak ada link untuk disalin.");
+        return;
+      }
+      navigator.clipboard.writeText(urlField.value)
+        .then(() => alert("Link berhasil disalin!"))
+        .catch(() => alert("Gagal menyalin link."));
+    }
+  
+    function toggleDarkMode() {
+      const body = document.body;
+      body.classList.toggle("dark");
+      const darkBtn = document.querySelector(".tools button");
+      if (body.classList.contains("dark")) {
+        localStorage.setItem("theme", "dark");
+        darkBtn.textContent = "🌞 Light Mode";
+      } else {
+        localStorage.setItem("theme", "light");
+        darkBtn.textContent = "🌗 Dark Mode";
+      }
+    }
+  
+    function addToHistory(url, format) {
+      const history = JSON.parse(localStorage.getItem("downloadHistory") || "[]");
+      const newEntry = {
+        url: url,
+        format: format,
+        time: new Date().toLocaleString()
+      };
+      history.unshift(newEntry);
+      localStorage.setItem("downloadHistory", JSON.stringify(history));
+      renderHistory();
+    }
+  
+    function renderHistory() {
+      const historyList = document.getElementById("historyList");
+      const history = JSON.parse(localStorage.getItem("downloadHistory") || "[]");
+      historyList.innerHTML = "";
+      history.forEach(entry => {
+        const li = document.createElement("li");
+        li.textContent = `[${entry.time}] ${entry.format} - ${entry.url}`;
+        historyList.appendChild(li);
+      });
+    }
+  
+    function clearHistory() {
+      if (confirm("Yakin ingin menghapus semua riwayat unduhan?")) {
+        localStorage.removeItem("downloadHistory");
+        renderHistory();
+      }
+    }
+  
+    function updateClock() {
+      const now = new Date();
+      document.getElementById("clock").textContent = now.toLocaleTimeString();
+    }
+  
+    if (localStorage.getItem("theme") === "dark") {
+      document.body.classList.add("dark");
+      document.querySelector(".tools button").textContent = "🌞 Light Mode";
+    }
+  
+    setInterval(updateClock, 1000);
+    updateClock();
+    document.addEventListener("DOMContentLoaded", renderHistory);
+  </script>
+  
+</body>
+</html>
